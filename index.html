@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Cloud Browser</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f4f4f9; }
+        input { padding: 10px; width: 60%; max-width: 500px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        iframe { width: 100%; height: 80vh; border: 1px solid #ccc; margin-top: 20px; display: none; }
+    </style>
+</head>
+<body>
+
+    <h2>Cloud Network Portal</h2>
+    <p>Enter a URL to browse securely via GitHub's static network tunnel:</p>
+    
+    <input type="text" id="urlInput" value="https://instagram.com">
+    <button onclick="launchProxy()">Go</button>
+
+    <iframe id="proxyFrame"></iframe>
+
+    <script>
+        // 1. Register the background service worker script
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log("Static network pipeline active."))
+                .catch(err => console.error("Pipeline failure:", err));
+        }
+
+        // 2. Load the targeted site into the iframe window
+        function launchProxy() {
+            const inputUrl = document.getElementById('urlInput').value;
+            const frame = document.getElementById('proxyFrame');
+            
+            // Route the request directly through our service worker prefix
+            frame.src = '/proxy/' + encodeURIComponent(inputUrl);
+            frame.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
